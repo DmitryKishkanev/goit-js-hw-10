@@ -1,0 +1,63 @@
+input {
+  width: 250px;
+  padding: 8px 8px 8px 16px;
+  margin: 8px 0;
+
+  border: 1px solid #808080;
+  border-radius: 4px;
+
+  font-family: Montserrat;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  letter-spacing: 0.04em;
+  color: #2e2f42;
+
+  outline: none;
+}
+
+button {
+  min-width: 50px;
+
+  border: 1px solid #212121;
+  border-radius: 4px;
+  padding: 8px 16px;
+
+  font-family: Montserrat;
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 150%;
+  letter-spacing: 0.04em;
+  color: #212121;
+}
+
+.timer {
+  display: flex;
+  flex-direction: row;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  &:not(:last-child) {
+    margin-right: 20px;
+  }
+}
+
+.value {
+  margin-left: auto;
+  margin-right: auto;
+
+  font-family: Montserrat;
+  font-weight: 500;
+  font-size: 50px;
+  line-height: 150%;
+  letter-spacing: 0.04em;
+  color: #212121;
+}
+
+.label {
+  text-transform: uppercase;
+  color: #212121;
+}
