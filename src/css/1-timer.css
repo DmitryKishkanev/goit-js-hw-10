@@ -1,39 +1,59 @@
-input {
-  width: 250px;
-  padding: 8px 8px 8px 16px;
-  margin: 8px 0;
-
-  border: 1px solid #808080;
-  border-radius: 4px;
-
-  font-family: Montserrat;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 150%;
-  letter-spacing: 0.04em;
-  color: #2e2f42;
-
-  outline: none;
+body {
+  text-align: center;
+  margin: 0;
 }
 
-button {
-  min-width: 50px;
+input {
+  min-width: 250px;
+  margin-top: 50px;
 
-  border: 1px solid #212121;
+  border: 2px solid #808080;
   border-radius: 4px;
-  padding: 8px 16px;
+
+  outline: none;
 
   font-family: Montserrat;
   font-weight: 500;
-  font-size: 15px;
+  font-size: 20px;
   line-height: 150%;
   letter-spacing: 0.04em;
   color: #212121;
+
+  &:hover,
+  &:focus {
+    border-color: #2196f3;
+  }
+}
+
+button {
+  padding: 2px 12px;
+
+  border: 2px solid #afb1b8;
+  border-radius: 4px;
+
+  font-family: Montserrat;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 150%;
+  letter-spacing: 0.04em;
+  color: #afb1b8;
+}
+
+.isActive {
+  border-color: #212121;
+  color: #212121;
+
+  &:hover,
+  &:focus {
+    background-color: #d3d6df;
+  }
 }
 
 .timer {
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .field {
@@ -41,7 +61,7 @@ button {
   flex-direction: column;
 
   &:not(:last-child) {
-    margin-right: 20px;
+    margin-right: 32px;
   }
 }
 
