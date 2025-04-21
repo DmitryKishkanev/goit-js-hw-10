@@ -61,7 +61,7 @@ button {
   flex-direction: column;
 
   &:not(:last-child) {
-    margin-right: 32px;
+    margin-right: 53px;
   }
 }
 
@@ -80,4 +80,18 @@ button {
 .label {
   text-transform: uppercase;
   color: #212121;
+}
+
+/* Стили для iziToast*/
+.iziToast-body {
+  margin-left: 10px !important;
+  padding: 10px 0 10px 65px !important;
+}
+
+.fa-circle-xmark {
+  font-size: 55px !important;
+}
+
+.iziToast {
+  border-radius: 5px !important;
 }
