@@ -6,7 +6,9 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import '../css/1-timer.css';
 
 const refs = {
+  dataInput: document.querySelector('#datetime-picker'),
   buttonStart: document.querySelector('[data-start]'),
+  buttonClear: document.querySelector('[data-clear]'),
   fieldDays: document.querySelector('[data-days]'),
   fieldHours: document.querySelector('[data-hours]'),
   fieldMinutes: document.querySelector('[data-minutes]'),
@@ -30,12 +32,13 @@ const options = {
       iziToastOptions();
     } else {
       // Вешаем слушатель события на кнопку Start
-      refs.buttonStart.addEventListener('click', onClick);
+      refs.buttonStart.addEventListener('click', onStartClick);
       refs.buttonStart.classList.add('isActive');
     }
     userSelectedDate = selectedDates[0];
-
-    console.log(userSelectedDate);
+    refs.buttonClear.addEventListener('click', onClearClick);
+    refs.buttonClear.classList.add('isActive');
+    // console.log(userSelectedDate);
   },
 };
 
@@ -52,22 +55,54 @@ function iziToastOptions() {
 }
 
 // Сохраняем в переменную результат вызова экземпляра flatpickr
-const fp = flatpickr('#datetime-picker', options);
+const fp = flatpickr(refs.dataInput, options);
+
+// Обновляем в Input дату каждую минуту
+setInterval(() => {
+  fp.setDate(new Date(), true);
+}, 60000);
+
+//Переменную для хранения setInterval
+let intervalId;
 
 // Функция обработчика слушателя событий кнопки Start
-function onClick() {
-  refs.buttonStart.removeEventListener('click', onClick);
-  refs.buttonStart.classList.remove('isActive');
-  fp.destroy();
-  // document.getElementById('#datetime-picker').disabled = true;
+function onStartClick() {
+  refs.buttonStart.removeEventListener('click', onStartClick);
+  refs.buttonStart.addEventListener('click', onStopClick);
+  refs.buttonStart.textContent = 'Stop';
+  refs.buttonClear.removeEventListener('click', onClearClick);
+  refs.buttonClear.classList.remove('isActive');
+  refs.dataInput.setAttribute('disabled', true);
+  refs.dataInput.classList.add('inputDisabled');
 
-  return setInterval(() => {
+  intervalId = setInterval(() => {
     const timeLeft = convertMs(userSelectedDate - new Date());
     refs.fieldDays.textContent = addLeadingZero(timeLeft.days);
     refs.fieldHours.textContent = addLeadingZero(timeLeft.hours);
     refs.fieldMinutes.textContent = addLeadingZero(timeLeft.minutes);
     refs.fieldSeconds.textContent = addLeadingZero(timeLeft.seconds);
   }, 1000);
+}
+
+function onStopClick() {
+  clearInterval(intervalId);
+  refs.buttonStart.addEventListener('click', onStartClick);
+  refs.buttonStart.textContent = 'Start';
+  refs.buttonClear.addEventListener('click', onClearClick);
+  refs.buttonClear.classList.add('isActive');
+  refs.dataInput.removeAttribute('disabled');
+  refs.dataInput.classList.remove('inputDisabled');
+}
+
+function onClearClick() {
+  userSelectedDate = null;
+  fp.setDate(new Date(), true);
+  refs.buttonStart.removeEventListener('click', onStartClick);
+  refs.buttonStart.classList.remove('isActive');
+  refs.fieldDays.textContent = addLeadingZero('0');
+  refs.fieldHours.textContent = addLeadingZero('0');
+  refs.fieldMinutes.textContent = addLeadingZero('0');
+  refs.fieldSeconds.textContent = addLeadingZero('0');
 }
 
 // Добавляем нуль слева к значениям отображающихся таймером
