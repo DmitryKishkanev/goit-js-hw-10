@@ -47,6 +47,8 @@ button {
   letter-spacing: 0.04em;
   color: #afb1b8;
 
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
   &:hover,
   &:focus {
     outline: none;
@@ -54,12 +56,14 @@ button {
 }
 
 .isActive {
-  border-color: #212121;
   color: #212121;
+  background-color: #2196f3;
+  border-color: #212121;
 
   &:hover,
   &:focus {
-    background-color: #d3d6df;
+    /* background-color: #d3d6df; */
+    background-color: #61b3f6;
   }
 }
 

@@ -15,8 +15,16 @@ const refs = {
   fieldSeconds: document.querySelector('[data-seconds]'),
 };
 
+// Переменная для хранения localStorage ключа
+const STORAGE_KEY = 'feedback-input-state';
+
 // Переменная для хранения выбранной даты
-let userSelectedDate = '';
+let userSelectedDate;
+
+//Переменную для хранения setInterval
+let intervalId;
+
+populateInput();
 
 // Необязательный объект параметров функции flatpickr
 const options = {
@@ -36,6 +44,10 @@ const options = {
       refs.buttonStart.classList.add('isActive');
     }
     userSelectedDate = selectedDates[0];
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userSelectedDate));
+    // localStorage.setItem(STORAGE_KEY, userSelectedDate);
+
     refs.buttonClear.addEventListener('click', onClearClick);
     refs.buttonClear.classList.add('isActive');
     // console.log(userSelectedDate);
@@ -62,9 +74,6 @@ setInterval(() => {
   fp.setDate(new Date(), true);
 }, 60000);
 
-//Переменную для хранения setInterval
-let intervalId;
-
 // Функция обработчика слушателя событий кнопки Start
 function onStartClick() {
   refs.buttonStart.removeEventListener('click', onStartClick);
@@ -77,6 +86,7 @@ function onStartClick() {
 
   intervalId = setInterval(() => {
     const timeLeft = convertMs(userSelectedDate - new Date());
+
     refs.fieldDays.textContent = addLeadingZero(timeLeft.days);
     refs.fieldHours.textContent = addLeadingZero(timeLeft.hours);
     refs.fieldMinutes.textContent = addLeadingZero(timeLeft.minutes);
@@ -84,8 +94,10 @@ function onStartClick() {
   }, 1000);
 }
 
+// Функция обработчика слушателя событий кнопки Stop
 function onStopClick() {
   clearInterval(intervalId);
+
   refs.buttonStart.addEventListener('click', onStartClick);
   refs.buttonStart.textContent = 'Start';
   refs.buttonClear.addEventListener('click', onClearClick);
@@ -94,15 +106,37 @@ function onStopClick() {
   refs.dataInput.classList.remove('inputDisabled');
 }
 
+// Функция обработчика слушателя событий кнопки Clear
 function onClearClick() {
   userSelectedDate = null;
   fp.setDate(new Date(), true);
+  refs.buttonClear.removeEventListener('click', onClearClick);
   refs.buttonStart.removeEventListener('click', onStartClick);
+  refs.buttonStart.removeEventListener('click', onStopClick);
+  refs.buttonClear.classList.remove('isActive');
   refs.buttonStart.classList.remove('isActive');
   refs.fieldDays.textContent = addLeadingZero('0');
   refs.fieldHours.textContent = addLeadingZero('0');
   refs.fieldMinutes.textContent = addLeadingZero('0');
   refs.fieldSeconds.textContent = addLeadingZero('0');
+}
+
+function populateInput() {
+  // const savedInput = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  // if (savedInput) {
+  //   const parsedDate = new Date(savedInput);
+  //   fp.setDate(parsedDate);
+  //   refs.dataInput.value = parsedDate.toLocaleString();
+  // }
+
+  const savedDate = localStorage.getItem(STORAGE_KEY);
+
+  if (savedDate) {
+    // Парсим дату из строки и устанавливаем её как defaultDate
+    const parsedDate = new Date(JSON.parse(savedDate));
+    fp.setDate(parsedDate); // Устанавливаем дату в flatpickr
+    refs.dataInput.value = parsedDate.toLocaleString();
+  }
 }
 
 // Добавляем нуль слева к значениям отображающихся таймером
