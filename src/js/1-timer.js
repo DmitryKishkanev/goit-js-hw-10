@@ -24,8 +24,6 @@ let userSelectedDate;
 //Переменную для хранения setInterval
 let intervalId;
 
-populateInput();
-
 // Необязательный объект параметров функции flatpickr
 const options = {
   dateFormat: 'd-m-Y H:i',
@@ -40,17 +38,14 @@ const options = {
       iziToastOptions();
     } else {
       // Вешаем слушатель события на кнопку Start
+      // localStorage.setItem(STORAGE_KEY, selectedDates[0]);
       refs.buttonStart.addEventListener('click', onStartClick);
       refs.buttonStart.classList.add('isActive');
     }
     userSelectedDate = selectedDates[0];
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(userSelectedDate));
-    // localStorage.setItem(STORAGE_KEY, userSelectedDate);
-
     refs.buttonClear.addEventListener('click', onClearClick);
     refs.buttonClear.classList.add('isActive');
-    // console.log(userSelectedDate);
   },
 };
 
@@ -69,21 +64,10 @@ function iziToastOptions() {
 // Сохраняем в переменную результат вызова экземпляра flatpickr
 const fp = flatpickr(refs.dataInput, options);
 
-// Обновляем в Input дату каждую минуту
-setInterval(() => {
-  fp.setDate(new Date(), true);
-}, 60000);
+// const savedDate = JSON.parse(localStorage.getItem(STORAGE_KEY));
+const savedDate = localStorage.getItem(STORAGE_KEY);
 
-// Функция обработчика слушателя событий кнопки Start
-function onStartClick() {
-  refs.buttonStart.removeEventListener('click', onStartClick);
-  refs.buttonStart.addEventListener('click', onStopClick);
-  refs.buttonStart.textContent = 'Stop';
-  refs.buttonClear.removeEventListener('click', onClearClick);
-  refs.buttonClear.classList.remove('isActive');
-  refs.dataInput.setAttribute('disabled', true);
-  refs.dataInput.classList.add('inputDisabled');
-
+const startInterval = () => {
   intervalId = setInterval(() => {
     const timeLeft = convertMs(userSelectedDate - new Date());
 
@@ -92,11 +76,72 @@ function onStartClick() {
     refs.fieldMinutes.textContent = addLeadingZero(timeLeft.minutes);
     refs.fieldSeconds.textContent = addLeadingZero(timeLeft.seconds);
   }, 1000);
+};
+
+const intervalStopped = localStorage.getItem('intervalStopped');
+
+if (savedDate && intervalStopped !== 'true') {
+  const parsedDate = new Date(savedDate);
+  fp.setDate(parsedDate);
+  userSelectedDate = parsedDate;
+
+  startInterval();
+
+  if (!intervalId) {
+    refs.buttonStart.addEventListener('click', onStartClick);
+    refs.buttonClear.addEventListener('click', onClearClick);
+    refs.buttonStart.classList.add('isActive');
+    refs.buttonClear.classList.add('isActive');
+  } else {
+    refs.buttonStart.removeEventListener('click', onStartClick);
+    refs.buttonClear.removeEventListener('click', onClearClick);
+    refs.buttonStart.classList.remove('isActive');
+    refs.buttonClear.classList.remove('isActive');
+    refs.buttonStart.addEventListener('click', onStopClick);
+    refs.buttonStart.classList.add('isActive');
+    refs.buttonStart.textContent = 'Stop';
+    refs.dataInput.setAttribute('disabled', true);
+    refs.dataInput.classList.add('inputDisabled');
+  }
+}
+
+// Обновляем в Input дату каждую минуту
+setInterval(() => {
+  fp.setDate(new Date(), true);
+}, 60000);
+
+// Функция обработчика слушателя событий кнопки Start
+function onStartClick() {
+  localStorage.setItem(STORAGE_KEY, userSelectedDate);
+
+  refs.buttonStart.removeEventListener('click', onStartClick);
+  refs.buttonStart.addEventListener('click', onStopClick);
+  refs.buttonStart.textContent = 'Stop';
+  refs.buttonClear.removeEventListener('click', onClearClick);
+  refs.buttonClear.classList.remove('isActive');
+  refs.dataInput.setAttribute('disabled', true);
+  refs.dataInput.classList.add('inputDisabled');
+
+  startInterval();
+
+  // const startInterval = () => {
+  //   intervalId = setInterval(() => {
+  //     const timeLeft = convertMs(userSelectedDate - new Date());
+
+  //     refs.fieldDays.textContent = addLeadingZero(timeLeft.days);
+  //     refs.fieldHours.textContent = addLeadingZero(timeLeft.hours);
+  //     refs.fieldMinutes.textContent = addLeadingZero(timeLeft.minutes);
+  //     refs.fieldSeconds.textContent = addLeadingZero(timeLeft.seconds);
+  //   }, 1000);
+  // };
 }
 
 // Функция обработчика слушателя событий кнопки Stop
 function onStopClick() {
   clearInterval(intervalId);
+  intervalId = null;
+
+  localStorage.setItem('intervalStopped', 'true');
 
   refs.buttonStart.addEventListener('click', onStartClick);
   refs.buttonStart.textContent = 'Start';
@@ -109,7 +154,8 @@ function onStopClick() {
 // Функция обработчика слушателя событий кнопки Clear
 function onClearClick() {
   userSelectedDate = null;
-  fp.setDate(new Date(), true);
+  fp.setDate(new Date());
+  localStorage.removeItem(STORAGE_KEY);
   refs.buttonClear.removeEventListener('click', onClearClick);
   refs.buttonStart.removeEventListener('click', onStartClick);
   refs.buttonStart.removeEventListener('click', onStopClick);
@@ -128,15 +174,13 @@ function populateInput() {
   //   fp.setDate(parsedDate);
   //   refs.dataInput.value = parsedDate.toLocaleString();
   // }
-
-  const savedDate = localStorage.getItem(STORAGE_KEY);
-
-  if (savedDate) {
-    // Парсим дату из строки и устанавливаем её как defaultDate
-    const parsedDate = new Date(JSON.parse(savedDate));
-    fp.setDate(parsedDate); // Устанавливаем дату в flatpickr
-    refs.dataInput.value = parsedDate.toLocaleString();
-  }
+  // const savedDate = localStorage.getItem(STORAGE_KEY);
+  // if (savedDate) {
+  //   // Парсим дату из строки и устанавливаем её как defaultDate
+  //   const parsedDate = new Date(JSON.parse(savedDate));
+  //   fp.setDate(parsedDate); // Устанавливаем дату в flatpickr
+  //   refs.dataInput.value = parsedDate.toLocaleString();
+  // }
 }
 
 // Добавляем нуль слева к значениям отображающихся таймером
