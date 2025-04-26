@@ -15,14 +15,18 @@ const refs = {
   fieldSeconds: document.querySelector('[data-seconds]'),
 };
 
-// Переменная для хранения localStorage ключа
-const STORAGE_KEY = 'feedback-input-state';
+// Переменные для хранения localStorage ключей
+const STORAGE_INPUT_KEY = 'feedback-input-state';
+const STORAGE_INTERVAL_KEY = 'feedback-interval-state';
 
 // Переменная для хранения выбранной даты
 let userSelectedDate;
 
 //Переменную для хранения setInterval
 let intervalId;
+
+// Переменная для хранения разницы между выбранной и текущей датами
+let timeLeft;
 
 // Необязательный объект параметров функции flatpickr
 const options = {
@@ -34,17 +38,19 @@ const options = {
   onClose(selectedDates) {
     if (selectedDates[0] < new Date()) {
       refs.buttonStart.classList.remove('isActive');
-
+      // Если выбранная дата меньше текущей показываем alert
       iziToastOptions();
     } else {
+      // Сохраняем выбранную дату во внешнюю переменную
+      userSelectedDate = selectedDates[0];
       // Вешаем слушатель события на кнопку Start
-      // localStorage.setItem(STORAGE_KEY, selectedDates[0]);
       refs.buttonStart.addEventListener('click', onStartClick);
+      // Вешаем на кнопку Start класс isActive
       refs.buttonStart.classList.add('isActive');
     }
-    userSelectedDate = selectedDates[0];
-
+    // Вешаем слушатель события на кнопку Clear
     refs.buttonClear.addEventListener('click', onClearClick);
+    //  Вешаем на кнопку Clear класс isActive
     refs.buttonClear.classList.add('isActive');
   },
 };
@@ -64,12 +70,10 @@ function iziToastOptions() {
 // Сохраняем в переменную результат вызова экземпляра flatpickr
 const fp = flatpickr(refs.dataInput, options);
 
-// const savedDate = JSON.parse(localStorage.getItem(STORAGE_KEY));
-const savedDate = localStorage.getItem(STORAGE_KEY);
-
+// Функция создания интервала
 const startInterval = () => {
   intervalId = setInterval(() => {
-    const timeLeft = convertMs(userSelectedDate - new Date());
+    timeLeft = convertMs(userSelectedDate - new Date());
 
     refs.fieldDays.textContent = addLeadingZero(timeLeft.days);
     refs.fieldHours.textContent = addLeadingZero(timeLeft.hours);
@@ -78,32 +82,8 @@ const startInterval = () => {
   }, 1000);
 };
 
-const intervalStopped = localStorage.getItem('intervalStopped');
-
-if (savedDate && intervalStopped !== 'true') {
-  const parsedDate = new Date(savedDate);
-  fp.setDate(parsedDate);
-  userSelectedDate = parsedDate;
-
-  startInterval();
-
-  if (!intervalId) {
-    refs.buttonStart.addEventListener('click', onStartClick);
-    refs.buttonClear.addEventListener('click', onClearClick);
-    refs.buttonStart.classList.add('isActive');
-    refs.buttonClear.classList.add('isActive');
-  } else {
-    refs.buttonStart.removeEventListener('click', onStartClick);
-    refs.buttonClear.removeEventListener('click', onClearClick);
-    refs.buttonStart.classList.remove('isActive');
-    refs.buttonClear.classList.remove('isActive');
-    refs.buttonStart.addEventListener('click', onStopClick);
-    refs.buttonStart.classList.add('isActive');
-    refs.buttonStart.textContent = 'Stop';
-    refs.dataInput.setAttribute('disabled', true);
-    refs.dataInput.classList.add('inputDisabled');
-  }
-}
+//Вызов функции возвращения данных из localStorage
+populateInput();
 
 // Обновляем в Input дату каждую минуту
 setInterval(() => {
@@ -112,7 +92,8 @@ setInterval(() => {
 
 // Функция обработчика слушателя событий кнопки Start
 function onStartClick() {
-  localStorage.setItem(STORAGE_KEY, userSelectedDate);
+  localStorage.setItem(STORAGE_INPUT_KEY, userSelectedDate);
+  localStorage.removeItem(STORAGE_INTERVAL_KEY);
 
   refs.buttonStart.removeEventListener('click', onStartClick);
   refs.buttonStart.addEventListener('click', onStopClick);
@@ -123,25 +104,14 @@ function onStartClick() {
   refs.dataInput.classList.add('inputDisabled');
 
   startInterval();
-
-  // const startInterval = () => {
-  //   intervalId = setInterval(() => {
-  //     const timeLeft = convertMs(userSelectedDate - new Date());
-
-  //     refs.fieldDays.textContent = addLeadingZero(timeLeft.days);
-  //     refs.fieldHours.textContent = addLeadingZero(timeLeft.hours);
-  //     refs.fieldMinutes.textContent = addLeadingZero(timeLeft.minutes);
-  //     refs.fieldSeconds.textContent = addLeadingZero(timeLeft.seconds);
-  //   }, 1000);
-  // };
 }
 
 // Функция обработчика слушателя событий кнопки Stop
 function onStopClick() {
+  localStorage.setItem(STORAGE_INTERVAL_KEY, 'true');
+
   clearInterval(intervalId);
   intervalId = null;
-
-  localStorage.setItem('intervalStopped', 'true');
 
   refs.buttonStart.addEventListener('click', onStartClick);
   refs.buttonStart.textContent = 'Start';
@@ -155,7 +125,9 @@ function onStopClick() {
 function onClearClick() {
   userSelectedDate = null;
   fp.setDate(new Date());
-  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(STORAGE_INPUT_KEY);
+  localStorage.removeItem(STORAGE_INTERVAL_KEY);
+
   refs.buttonClear.removeEventListener('click', onClearClick);
   refs.buttonStart.removeEventListener('click', onStartClick);
   refs.buttonStart.removeEventListener('click', onStopClick);
@@ -167,20 +139,46 @@ function onClearClick() {
   refs.fieldSeconds.textContent = addLeadingZero('0');
 }
 
+// Функция возвращения данных из localStorage
 function populateInput() {
-  // const savedInput = JSON.parse(localStorage.getItem(STORAGE_KEY));
-  // if (savedInput) {
-  //   const parsedDate = new Date(savedInput);
-  //   fp.setDate(parsedDate);
-  //   refs.dataInput.value = parsedDate.toLocaleString();
-  // }
-  // const savedDate = localStorage.getItem(STORAGE_KEY);
-  // if (savedDate) {
-  //   // Парсим дату из строки и устанавливаем её как defaultDate
-  //   const parsedDate = new Date(JSON.parse(savedDate));
-  //   fp.setDate(parsedDate); // Устанавливаем дату в flatpickr
-  //   refs.dataInput.value = parsedDate.toLocaleString();
-  // }
+  const savedDate = localStorage.getItem(STORAGE_INPUT_KEY);
+  const intervalStopped = localStorage.getItem(STORAGE_INTERVAL_KEY);
+
+  if (savedDate) {
+    const parsedDate = new Date(savedDate);
+    fp.setDate(parsedDate);
+    userSelectedDate = parsedDate;
+
+    if (intervalStopped !== 'true') {
+      startInterval();
+      refs.buttonStart.addEventListener('click', onStopClick);
+      refs.buttonStart.textContent = 'Stop';
+      refs.dataInput.setAttribute('disabled', true);
+      refs.dataInput.classList.add('inputDisabled');
+
+      timeLeft = convertMs(userSelectedDate - new Date());
+      refs.fieldDays.textContent = addLeadingZero(timeLeft.days);
+      refs.fieldHours.textContent = addLeadingZero(timeLeft.hours);
+      refs.fieldMinutes.textContent = addLeadingZero(timeLeft.minutes);
+      refs.fieldSeconds.textContent = addLeadingZero(timeLeft.seconds);
+    } else {
+      refs.buttonStart.removeEventListener('click', onStopClick);
+      refs.buttonStart.addEventListener('click', onStartClick);
+      refs.buttonStart.textContent = 'Start';
+      refs.buttonClear.addEventListener('click', onClearClick);
+      refs.buttonClear.classList.add('isActive');
+      refs.dataInput.removeAttribute('disabled');
+      refs.dataInput.classList.remove('inputDisabled');
+
+      timeLeft = convertMs(userSelectedDate - new Date());
+      refs.fieldDays.textContent = addLeadingZero(timeLeft.days);
+      refs.fieldHours.textContent = addLeadingZero(timeLeft.hours);
+      refs.fieldMinutes.textContent = addLeadingZero(timeLeft.minutes);
+      refs.fieldSeconds.textContent = addLeadingZero(timeLeft.seconds);
+    }
+
+    refs.buttonStart.classList.add('isActive');
+  }
 }
 
 // Добавляем нуль слева к значениям отображающихся таймером

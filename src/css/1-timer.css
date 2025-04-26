@@ -1,6 +1,11 @@
 body {
   text-align: center;
   margin: 0;
+
+  background-image: url(../img/timer.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+  /* background-position: center; */
 }
 
 input {
