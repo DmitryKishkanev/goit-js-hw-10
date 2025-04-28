@@ -93,6 +93,7 @@ const startInterval = () => {
       localStorage.removeItem(STORAGE_INTERVAL_KEY);
 
       refs.buttonStart.removeEventListener('click', onStopClick);
+      refs.buttonStart.textContent = 'Start';
       refs.buttonStart.classList.remove('isActive');
       refs.dataInput.removeAttribute('disabled');
       refs.dataInput.classList.remove('inputDisabled');
