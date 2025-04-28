@@ -38,6 +38,7 @@ const options = {
   onClose(selectedDates) {
     if (selectedDates[0] < new Date()) {
       refs.buttonStart.classList.remove('isActive');
+
       // Если выбранная дата меньше текущей показываем alert
       iziToastOptions();
     } else {
@@ -79,6 +80,23 @@ const startInterval = () => {
     refs.fieldHours.textContent = addLeadingZero(timeLeft.hours);
     refs.fieldMinutes.textContent = addLeadingZero(timeLeft.minutes);
     refs.fieldSeconds.textContent = addLeadingZero(timeLeft.seconds);
+
+    // Если счетчик дошёл до нуля - удаляется интервал
+    if (
+      timeLeft.days <= 0 &&
+      timeLeft.hours <= 0 &&
+      timeLeft.minutes <= 0 &&
+      timeLeft.seconds <= 0
+    ) {
+      clearInterval(intervalId);
+      localStorage.removeItem(STORAGE_INPUT_KEY);
+      localStorage.removeItem(STORAGE_INTERVAL_KEY);
+
+      refs.buttonStart.removeEventListener('click', onStopClick);
+      refs.buttonStart.classList.remove('isActive');
+      refs.dataInput.removeAttribute('disabled');
+      refs.dataInput.classList.remove('inputDisabled');
+    }
   }, 1000);
 };
 
@@ -96,9 +114,9 @@ function onStartClick() {
   localStorage.removeItem(STORAGE_INTERVAL_KEY);
 
   refs.buttonStart.removeEventListener('click', onStartClick);
+  refs.buttonClear.removeEventListener('click', onClearClick);
   refs.buttonStart.addEventListener('click', onStopClick);
   refs.buttonStart.textContent = 'Stop';
-  refs.buttonClear.removeEventListener('click', onClearClick);
   refs.buttonClear.classList.remove('isActive');
   refs.dataInput.setAttribute('disabled', true);
   refs.dataInput.classList.add('inputDisabled');
@@ -114,8 +132,8 @@ function onStopClick() {
   intervalId = null;
 
   refs.buttonStart.addEventListener('click', onStartClick);
-  refs.buttonStart.textContent = 'Start';
   refs.buttonClear.addEventListener('click', onClearClick);
+  refs.buttonStart.textContent = 'Start';
   refs.buttonClear.classList.add('isActive');
   refs.dataInput.removeAttribute('disabled');
   refs.dataInput.classList.remove('inputDisabled');
@@ -125,6 +143,7 @@ function onStopClick() {
 function onClearClick() {
   userSelectedDate = null;
   fp.setDate(new Date());
+
   localStorage.removeItem(STORAGE_INPUT_KEY);
   localStorage.removeItem(STORAGE_INTERVAL_KEY);
 
@@ -133,6 +152,7 @@ function onClearClick() {
   refs.buttonStart.removeEventListener('click', onStopClick);
   refs.buttonClear.classList.remove('isActive');
   refs.buttonStart.classList.remove('isActive');
+
   refs.fieldDays.textContent = addLeadingZero('0');
   refs.fieldHours.textContent = addLeadingZero('0');
   refs.fieldMinutes.textContent = addLeadingZero('0');
