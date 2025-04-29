@@ -1,0 +1,90 @@
+body {
+  display: flex;
+  justify-content: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  margin-top: 50px;
+
+  font-family: Montserrat;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 150%;
+  letter-spacing: 0.04em;
+  color: #2e2f42;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+}
+
+fieldset {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 10px 0 0 0;
+
+  border: 2px solid #808080;
+}
+
+fieldset label {
+  display: flex;
+  flex-direction: row;
+
+  font-family: Montserrat;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 150%;
+  letter-spacing: 0.04em;
+  color: #2e2f42;
+
+  &:not(:last-child) {
+    margin-right: 20px;
+  }
+}
+
+input {
+  padding: 5px 0;
+  margin-top: 0;
+
+  border: 2px solid #808080;
+  border-radius: 4px;
+
+  font-family: Montserrat;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 150%;
+  letter-spacing: 0.04em;
+  color: #2e2f42;
+
+  outline: none;
+
+  &:hover,
+  &:focus {
+    border-color: #2196f3;
+  }
+}
+
+button {
+  padding: 1px 6px;
+  margin-top: 10px;
+
+  border: 2px solid #808080;
+  border-radius: 4px;
+
+  font-family: Montserrat;
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 150%;
+  letter-spacing: 0.04em;
+  color: #2e2f42;
+
+  &:hover,
+  &:focus {
+    border-color: #212121;
+  }
+}
