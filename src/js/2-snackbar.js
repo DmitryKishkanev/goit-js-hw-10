@@ -5,28 +5,12 @@ import '../css/2-snackbar.css';
 const refs = {
   formEl: document.querySelector('.form'),
   delayField: document.querySelector('input[name="delay"]'),
-  //   submitButton: document.querySelector('button[type="submit"]'),
 };
 
+// Вешаем на форму слушатель события
 refs.formEl.addEventListener('submit', onFormSubmit);
-// refs.submitButton.addEventListener('click', onSubmitClick);
 
-// function onSubmitClick() {
-//   makePromise(Number(refs.delayField.value))
-//     .then(message => {
-//       iziToastOptions(
-//         `✅ Fulfilled promise in ${refs.delayField.value}ms`,
-//         'green'
-//       );
-//     })
-//     .catch(message => {
-//       iziToastOptions(
-//         `❌ Rejected promise in ${refs.delayField.value}ms`,
-//         'red'
-//       );
-//     });
-// }
-
+// Функция создания промиса в аргумены, которой передаём delay - время задержки setTimeout
 function makePromise(delay) {
   return new Promise((res, rej) => {
     setTimeout(() => {
@@ -39,9 +23,11 @@ function makePromise(delay) {
   });
 }
 
+// Функция - оброботчик слушателя события на форме
 function onFormSubmit(evt) {
   evt.preventDefault();
 
+  // Вызов функции промиса
   makePromise(Number(refs.delayField.value))
     .then(message => {
       iziToastOptions(
@@ -57,6 +43,7 @@ function onFormSubmit(evt) {
     });
 }
 
+// Опции подключенного через библиотеку alert
 function iziToastOptions(message, backgroundColor) {
   return iziToast.show({
     message,

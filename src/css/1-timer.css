@@ -5,7 +5,6 @@ body {
   background-image: url(../img/timer.jpg);
   background-size: cover;
   background-repeat: no-repeat;
-  /* background-position: center; */
 }
 
 input {
@@ -67,7 +66,6 @@ button {
 
   &:hover,
   &:focus {
-    /* background-color: #d3d6df; */
     background-color: #61b3f6;
   }
 }

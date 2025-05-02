@@ -1,6 +1,10 @@
 body {
   display: flex;
   justify-content: center;
+
+  background-image: url(../img/timer.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .form {
@@ -76,6 +80,8 @@ button {
   border: 2px solid #808080;
   border-radius: 4px;
 
+  background-color: #2196f3;
+
   font-family: Montserrat;
   font-weight: 400;
   font-size: 18px;
@@ -83,8 +89,10 @@ button {
   letter-spacing: 0.04em;
   color: #2e2f42;
 
+  outline: none;
+
   &:hover,
   &:focus {
-    border-color: #212121;
+    background-color: #61b3f6;
   }
 }
