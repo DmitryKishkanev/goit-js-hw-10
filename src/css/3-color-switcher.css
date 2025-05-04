@@ -1,0 +1,40 @@
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+
+  background-image: url(../img/timer.jpg);
+  background-size: cover;
+  background-repeat: no-repeat;
+}
+
+button {
+  padding: 7px 30px;
+  margin: 5px;
+
+  border: none;
+  border-radius: 4px;
+
+  background-color: #2196f3;
+
+  font-family: Montserrat;
+  font-weight: 500;
+  font-size: 18px;
+  line-height: 150%;
+  letter-spacing: 0.04em;
+  color: #2e2f42;
+
+  text-transform: uppercase;
+  transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  outline: none;
+
+  cursor: pointer;
+
+  &:hover,
+  &:focus {
+    background-color: #61b3f6;
+  }
+}
