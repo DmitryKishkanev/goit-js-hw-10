@@ -5,6 +5,7 @@ import '../css/2-snackbar.css';
 const refs = {
   formEl: document.querySelector('.form'),
   delayField: document.querySelector('input[name="delay"]'),
+  // formButton: document.querySelector('button[type="submit"]'),
 };
 
 // Вешаем на форму слушатель события
@@ -40,6 +41,9 @@ function onFormSubmit(evt) {
         `❌ Rejected promise in ${refs.delayField.value}ms`,
         'red'
       );
+    })
+    .finally(() => {
+      refs.formEl.reset();
     });
 }
 
