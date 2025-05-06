@@ -114,6 +114,5 @@ function iziToastOptions(message, backgroundColor) {
     messageColor: '#ffffff',
     backgroundColor,
     position: 'topRight',
-    timeout: 50000,
   });
 }
