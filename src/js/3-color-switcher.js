@@ -55,8 +55,7 @@ import '../css/3-color-switcher.css';
 const refs = {
   buttonStart: document.querySelector('[data-start]'),
   buttonClear: document.querySelector('[ data-clear]'),
-  bodyStyle: document.body.style,
-  originalBgImage: 'url("../../src/img/timer.jpg")',
+  bodyStyle: document.body,
 };
 
 // Переменные для хранения localStorage ключей
@@ -72,10 +71,10 @@ refs.buttonStart.addEventListener('click', onStartClick);
 // Функция создания интервала
 const startInterval = () => {
   intervalId = setInterval(() => {
-    refs.bodyStyle.backgroundImage = 'none';
+    refs.bodyStyle.style.backgroundImage = 'none';
 
     let preservedСolor = getRandomHexColor();
-    refs.bodyStyle.backgroundColor = preservedСolor;
+    refs.bodyStyle.style.backgroundColor = preservedСolor;
     localStorage.setItem(STORAGE_COLOR_KEY, preservedСolor);
   }, 1000);
 };
@@ -123,7 +122,7 @@ function onClearClick() {
   refs.buttonClear.setAttribute('disabled', true);
   refs.buttonClear.classList.remove('isActive');
 
-  refs.bodyStyle.backgroundImage = refs.originalBgImage;
+  refs.bodyStyle.classList.add('bg-body');
 }
 
 // Функция возвращения данных из localStorage
@@ -132,7 +131,7 @@ function populateColor() {
   const intervalStopped = localStorage.getItem(STORAGE_INTERVAL_KEY);
 
   if (savedColor) {
-    refs.bodyStyle.backgroundColor = savedColor;
+    refs.bodyStyle.style.backgroundColor = savedColor;
 
     if (intervalStopped !== 'true') {
       startInterval();
@@ -150,7 +149,7 @@ function populateColor() {
     refs.buttonStart.classList.add('isActive');
   } else {
     refs.buttonStart.classList.add('isActive');
-    refs.bodyStyle.backgroundImage = refs.originalBgImage;
+    refs.bodyStyle.classList.add('bg-body');
   }
 }
 

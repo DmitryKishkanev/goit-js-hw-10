@@ -6,6 +6,10 @@ body {
   margin: 0;
 }
 
+.bg-body {
+  background-image: url(../img/timer.jpg);
+}
+
 button {
   padding: 7px 30px;
   margin: 5px;
