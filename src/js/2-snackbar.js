@@ -113,8 +113,7 @@ function iziToastOptions(message, backgroundColor) {
     message,
     messageColor: '#ffffff',
     backgroundColor,
-    icon: 'fa-regular fa-circle-xmark',
-    iconColor: '#a22b2b',
     position: 'topRight',
+    timeout: 50000,
   });
 }
