@@ -56,7 +56,7 @@ const refs = {
   buttonStart: document.querySelector('[data-start]'),
   buttonClear: document.querySelector('[ data-clear]'),
   bodyStyle: document.body.style,
-  originalBgImage: 'url("../img/timer.jpg")',
+  originalBgImage: 'url("../../src/img/timer.jpg")',
 };
 
 // Переменные для хранения localStorage ключей
